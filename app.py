@@ -37,6 +37,10 @@ def register():
 def fertilizer():
     return render_template('fertilizer.html')
 
+@app.route('/wheat')
+def wheat():
+    return render_template('wheat.html')
+
 
 @app.route('/predict', methods=['POST'])
 def predict():

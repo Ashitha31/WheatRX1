@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheat Information</title>
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            text-align: center;
+            background-color: #2c5032;
+            color: #ecf0f1;
+            padding: 10px;
+            margin-bottom: 20px;
+}
+
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #2cb843;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product img {
+            width: 200px; /* Set your preferred width */
+            max-height: 150px; /* Set your preferred maximum height */
+            object-fit: cover; /* Maintain aspect ratio */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .product {
+            text-align: center;
+            margin: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding-top: 20px;
+            padding-bottom: 10px;
+            background-color: #2c5032;
+            color: #ecf0f1;
+        }
+
+        .nutritional-info, .cultivation-info {
+            margin-top: 20px;
+        }
+
+        .nutritional-table, .cultivation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .nutritional-table th, .nutritional-table td,
+        .cultivation-table th, .cultivation-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .nutritional-table th, .cultivation-table th {
+            background-color: #2c5032;
+            color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Wheat Wonders: Nourishing the World, Grain by Grain</h1>
+    </header>
+
+    <section>
+        <h2>Introduction</h2>
+        <p>Wheat, a member of the grass family, is a globally significant cereal crop that plays a crucial role in providing sustenance to a substantial portion of the world's population. Believed to have originated in the Fertile Crescent, wheat has been cultivated for thousands of years and has evolved into various varieties adapted to diverse climates and growing conditions. As a primary source of carbohydrates, wheat serves as a fundamental ingredient in a myriad of food products. Its adaptability, high yield, and nutritional value make it a staple in the diets of people around the world.</p>
+    </section>
+
+    <section>
+        <h2>Diseases</h2>
+        <p>Wheat cultivation, however, is not without challenges. Wheat is susceptible to various diseases that can impact yield and quality. Common wheat diseases include:</p>
+        <ul>
+            <li>Stripe Rust</li>
+            <li>Leaf Rust</li>
+            <li>Stem Rust</li>
+            <li>Loose Smut</li>
+            <li>Septoria</li>
+        </ul>
+    </section>
+
+    <section class="nutritional-info">
+        <h2>Nutritional Information</h2>
+        <p>Wheat is a nutritional powerhouse, providing essential nutrients for a healthy diet. Here's a breakdown of its nutritional content:</p>
+
+        <table class="nutritional-table">
+            <thead>
+                <tr>
+                    <th>Nutrient</th>
+                    <th>Amount per 100g</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Calories</td>
+                    <td>339</td>
+                </tr>
+                <tr>
+                    <td>Carbohydrates</td>
+                    <td>71.2g</td>
+                </tr>
+                <tr>
+                    <td>Protein</td>
+                    <td>11.6g</td>
+                </tr>
+                <tr>
+                    <td>Fiber</td>
+                    <td>12.2g</td>
+                </tr>
+                <tr>
+                    <td>Fat</td>
+                    <td>1.5g</td>
+                </tr>
+                <tr>
+                    <td>Vitamins</td>
+                    <td>Contains various B vitamins</td>
+                </tr>
+                <tr>
+                    <td>Minerals</td>
+                    <td>Rich in iron, magnesium, and zinc</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="cultivation-info">
+        <h2>Cultivation and Growth</h2>
+        <p>Wheat cultivation involves several stages, and its growth is influenced by various factors. Here are key points about wheat cultivation:</p>
+
+        <table class="cultivation-table">
+            <thead>
+                <tr>
+                    <th>Stage</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Germination</td>
+                    <td>Seeds germinate in favorable soil conditions, initiating the growth process.</td>
+                </tr>
+                <tr>
+                    <td>Tillering</td>
+                    <td>Plants develop additional shoots, forming a cluster of stems.</td>
+                </tr>
+                <tr>
+                    <td>Jointing</td>
+                    <td>Stems elongate, and nodes start to form.</td>
+                </tr>
+                <tr>
+                    <td>Heading</td>
+                    <td>Flower heads emerge as the plant prepares for reproduction.</td>
+                </tr>
+                <tr>
+                    <td>Ripening</td>
+                    <td>Grains mature and dry, signaling readiness for harvest.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>Importance</h2>
+        <p>Wheat is a vital crop with immense economic and nutritional importance. It provides a significant portion of the world's dietary energy and is a key ingredient in various food products, including bread, pasta, and cereals.</p>
+    </section>
+
+    <section>
+        <h2>Wheat Products</h2>
+        <div class="product-container">
+            <div class="product">
+                <img src="{{ url_for('static', filename='img/wheatbread.jpg') }}" alt="Wheat Bread">
+                <p>Wheat Bread</p>
+            </div>
+            <div class="product">
+                <img src="{{ url_for('static', filename='img/wheatcereal.jpg') }}" alt="Wheat Cereal">
+                <p>Wheat Cereal</p>
+            </div>
+            <div class="product">
+                <img src="{{ url_for('static', filename='img/wheatflour.jpg') }}" alt="Wheat Flour">
+                <p>Wheat Flour</p>
+            </div>
+            <div class="product">
+                <img src="{{ url_for('static', filename='img/wheatoatmealcookies.jpg') }}" alt="Wheat Oatmeal Cookies">
+                <p>Wheat Oatmeal Cookies</p>
+            </div>
+            <div class="product">
+                <img src="{{ url_for('static', filename='img/wheatpasta.jpg') }}" alt="Wheat Pasta">
+                <p>Wheat Pasta</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 Wheat Information</p>
+    </footer>
+</body>
+</html>
