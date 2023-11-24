@@ -3,14 +3,115 @@
 
 <head>
     <title>Wheat Disease Prediction</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!--link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"-->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('static/img/bg.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        h1 {
+            color: #fbf8f8;
+            /* White color */
+            font-size: 36px;
+            /* Larger font size */
+            font-weight: bold;
+            /* Bold text */
+            text-shadow: 2px 2px 4px #2d7a3a;
+            /* Add a subtle text shadow based on the previous green color */
+        }
+
+
+
+
+        form {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            margin: 0 auto;
+            position: relative;
+            /* Add relative positioning */
+            z-index: 1;
+            /* Set higher z-index for the form */
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 5px 0px 15px;
+            border: 1px solid green;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background-color: #104926;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 40px;
+            cursor: pointer;
+        }
+
+
+        p {
+            margin: 20px 0;
+            font-weight: bold;
+            color: #f1f6f4;
+        }
+
+        /* Additional Box Styling */
+        .additional-info-box {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: justify;
+            max-width: 999px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            /* Set lower z-index for the additional info box */
+        }
+
+        .image-container {
+            max-width: 35%;
+            box-sizing: border-box;
+            padding: 30px;
+            float: right;
+            /* Align the image to the right */
+            margin-top: -20px;
+            /* Adjust the top margin as needed */
+            margin-right: -60px;
+            /* Adjust the right margin as needed */
+        }
+
+        img {
+            border-radius: 8px;
+            height: auto;
+            width: 400px;
+
+        }
+    </style>
 </head>
 
 <body>
     <h1>Wheat Disease Prediction</h1>
     <form method="POST" action="/prediction" enctype="multipart/form-data">
         <input type="file" name="image" accept="image/*">
-        <input type="submit" value="Upload and Predict">
+        <input type="submit" value="Predict">
     </form>
 </body>
 

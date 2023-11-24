@@ -80,32 +80,33 @@
       <div class="row gy-4 mt-5 justify-content-center" data-aos="zoom-in" data-aos-delay="250">
         <div class="col-xl-2 col-md-4">
           <div class="icon-box">
-            <i class="ri-store-line"></i>
+            <img src="/static/img/icons/wheat.png" height=35% width="35%" alt="diese" />
+            <!--i class="ri-user-line"></i-->
             <h3><a href="{{ url_for('disease') }}">Disease Prediction</a></h3>
           </div>
         </div>
         <div class="col-xl-2 col-md-4">
           <div class="icon-box">
-            <i class="ri-bar-chart-box-line"></i>
+            <img src="/static/img/icons/yield_pred.png" height=40% width="40%" alt="yield" />
             <h3><a href="">Yield Prediction</a></h3>
           </div>
         </div>
         <div class="col-xl-2 col-md-4">
           <div class="icon-box">
-            <i class="ri-calendar-todo-line"></i>
+            <img src="/static/img/icons/fertilizer.png" height=35% width="35%" alt="fertilizer" />
             <h3><a href="{{ url_for('fertilizer') }}">Fertilizer Recommendation</a></h3>
           </div>
         </div>
 
         <div class="col-xl-2 col-md-4">
           <div class="icon-box">
-            <i class="ri-paint-brush-line"></i>
+            <img src="/static/img/icons/weather.png" height=35% width="35%" alt="weather" />
             <h3><a href="">Weather today</a></h3>
           </div>
         </div>
         <div class="col-xl-2 col-md-4">
           <div class="icon-box">
-            <i class="ri-database-2-line"></i>
+            <img src="/static/img/icons/know.png" height=35% width="35%" alt="know" />
             <h3><a href="{{ url_for('wheat') }}">Know our Crop</a></h3>
           </div>
         </div>
@@ -365,6 +366,15 @@
 
   <!-- Template Main JS File -->
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <p>&copy; 2023 WheatRX. All Rights Reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
 
 
 </body>
