@@ -1,8 +1,104 @@
 from flask import Flask, render_template, request
 import pickle
 import os
+import torch
+import torch.nn as nn
+from torchvision.transforms import transforms
+import numpy as np
+from torch.autograd import Variable
+from torchvision.models import squeezenet1_1  
+import torch.functional as F
+from io import open
+import os
+from PIL import Image
+import pathlib
+import glob
+import cv2
+from torchvision.transforms import ToTensor
 
 app = Flask(__name__)
+class ConvNet(nn.Module):
+    def __init__(self,num_classes=8):
+        super(ConvNet,self).__init__()
+        #Output
+        #(w-f+2P)/s)+1
+        
+        #Input Shape =(100,3,150,150)
+        self.conv1=nn.Conv2d(in_channels=3,out_channels=12,kernel_size=3,stride=1,padding=1)
+        self.bn1=nn.BatchNorm2d(num_features=12)
+        self.relu1=nn.ReLU()
+        
+        self.pool=nn.MaxPool2d(kernel_size=2)
+        
+        #Input Shape =(100,3,150,150)
+        self.conv2=nn.Conv2d(in_channels=12,out_channels=20,kernel_size=3,stride=1,padding=1)
+        #self.bn2=nn.BatchNorm2d(num_features=12)
+        self.relu2=nn.ReLU()
+        
+        #Input Shape =(100,3,150,150)
+        self.conv3=nn.Conv2d(in_channels=20,out_channels=32,kernel_size=3,stride=1,padding=1)
+        self.bn3=nn.BatchNorm2d(num_features=32)
+        self.relu3=nn.ReLU()
+        
+        self.fc=nn.Linear(in_features=32*75*75,out_features=num_classes)
+    def forward(self,input):
+        output=self.conv1(input)
+        output=self.bn1(output)
+        output=self.relu1(output)
+            
+        output=self.pool(output)
+            
+        output=self.conv2(output)
+        output=self.relu2(output)
+            
+        output=self.conv3(output)
+        output=self.bn3(output)
+        output=self.relu3(output)
+            
+        #output=output.view(-1,32*75*75)
+        print("Before flattening:", output.shape)
+        output = output.view(output.size(0), -1)
+        print("After flattening:", output.shape)
+        output=self.fc(output)
+        return output
+
+        
+checkpoint=torch.load('wheatdisease.model')
+model=ConvNet(num_classes=8)
+model.load_state_dict(checkpoint)
+model.eval()
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+classes = ["Brownrust", "Crown and Root Rot", "Healthy Wheat", "Leaf rust", "sepotoria", "strip rust", "wheat loose smut", "yellow rust"]
+
+
+fertilizer_recommendations = {
+    "Brownrust": "ammonium sulfate or urea, phosphatic fertilizers,superphosphate and potassium fertilizers like potassium chloride.",
+    "Crown and Root Rot": "Thiophanate-methyl fungicides",
+    "Healthy Wheat": "The Wheat is  Healthy ",
+    "Leaf rust": "Ammonium nitrate or urea",
+    "sepotoria": "ammonium sulfate or urea ",
+    "strip rust": "ammonium nitrate,phosphorus and potassium",
+    "wheat loose smut": "Azotobacter ",
+    "yellow rust": "roline275 or Aviator235Xpro"
+}
+
+def preprocess_image(image):
+    image = Image.fromarray(image)
+    
+    image = image.resize((150, 150))
+    
+    # Convert the resized image to a NumPy array
+    image = np.array(image)
+    
+    # Convert the NumPy array to a PyTorch tensor
+    image = torch.tensor(image, dtype=torch.float32)
+    image = image.permute(2, 0, 1)  # Reshape to [channels, height, width]
+    image = image.unsqueeze(0)  # Add batch dimension
+    
+    image = image.to(device)
+    
+    return image
+
 
 
 @app.route('/')
@@ -40,6 +136,10 @@ def fertilizer():
 @app.route('/wheat')
 def wheat():
     return render_template('wheat.html')
+@app.route('/disease')
+def disease():
+    return render_template('disease.html')
+
 
 
 @app.route('/predict', methods=['POST'])
@@ -144,6 +244,44 @@ def predict():
 
     # Render the prediction result and additional information in your HTML template
     return render_template('fertilizer.html', result=categorical_result, fertilizer_info=fertilizer_info.get(categorical_result, None))
+
+
+# @app.route('/prediction', methods=['POST'])
+@app.route('/prediction', methods=['POST'])
+
+
+def prediction():
+    if 'image' not in request.files:
+        return "No image provided"
+
+    image = request.files['image']
+    if image.filename == '':
+        return "No selected image file"
+
+    if image:
+        image_path = os.path.join('static/uploaded_images', image.filename)
+        image.save(image_path)
+        
+        # Image processing and prediction
+        image_cv = cv2.imread(image_path)
+        image_cv = cv2.cvtColor(image_cv, cv2.COLOR_BGR2RGB)
+        image_tensor = preprocess_image(image_cv)
+        print("Processed image shape:", image_tensor.shape)  # Debugging line
+
+        with torch.no_grad():
+            outputs = model(image_tensor)
+            print("Model outputs:", outputs)  # Debugging line
+
+        _, predicted_class = torch.max(outputs, 1)
+        class_label = classes[predicted_class.item()]# Retrieve fertilizer recommendation based on the predicted class label
+        fertilizer_recommendation = fertilizer_recommendations.get(class_label, "No recommendation found")
+        
+        
+        # Pass the image path and predicted label to the template
+        predicted_image = 'uploaded_images/' + image.filename
+        return render_template('result.html', class_label=class_label, predicted_image=predicted_image,fertilizer=fertilizer_recommendation)
+    
+    return "Prediction failed"  # This line is executed if the image processing fails
 
 
 if __name__ == '__main__':
