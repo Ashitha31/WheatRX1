@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request
+from joblib import load
+import requests
 import pickle
 import os
 import torch
@@ -82,6 +84,7 @@ fertilizer_recommendations = {
     "yellow rust": "roline275 or Aviator235Xpro"
 }
 
+
 def preprocess_image(image):
     image = Image.fromarray(image)
     
@@ -139,6 +142,70 @@ def wheat():
 @app.route('/disease')
 def disease():
     return render_template('disease.html')
+@app.route('/weather', methods=['GET', 'POST'])
+def weather():
+    return render_template('weather.html')
+
+@app.route('/weather_today', methods=['POST'])
+def weather_today():
+    # Retrieve the city name or location from the form data
+    city = request.form.get('city')
+    
+    # Replace 'YOUR_API_KEY' with your actual OpenWeatherMap API key
+    api_key = 'db5dbc8cf25affca2c9f131fce71faad'
+    
+    # API endpoint for current weather data by city name
+    weather_api_url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}'
+    
+    # Make a GET request to fetch weather data
+    response = requests.get(weather_api_url)
+    
+    if response.status_code == 200:
+        # Parse the JSON response
+        weather_data = response.json()
+        
+        # Extract relevant information from the response
+        temperature = weather_data['main']['temp']
+        description = weather_data['weather'][0]['description']
+        
+        # Render the weather information in the HTML template
+        return render_template('weather.html', city=city, temperature=temperature, description=description)
+    else:
+        # If there's an error or the city is not found, handle it accordingly
+        return render_template('weather.html', error="City not found. Please try again.")
+    
+@app.route('/yield')
+def yield_page():
+    # Render the yield information in your HTML template
+    # You can modify this section according to your yield information
+    yield_info = {
+        "title": "Yield Information",
+        "description": "This page contains information about crop yield.",
+        # Add more information here as needed for your yield module
+    }
+    return render_template('yield.html', yield_info=yield_info)
+
+@app.route('/yield_predict', methods=['POST'])
+def yield_prediction():
+    model = load('wheat_yield_prediction_model.joblib')
+    with open('label_encoders.pkl', 'rb') as file:
+        label_encoders = pickle.load(file)
+    
+    # Retrieve form data from the POST request
+    state = request.form['state']
+    district = request.form['district']
+    month = request.form['month']
+
+    state_encoded = label_encoders['State'].transform([state])[0]
+    district_encoded = label_encoders['District'].transform([district])[0]
+    month_encoded = label_encoders['Month'].transform([month])[0]
+
+    prediction = model.predict([[state_encoded, district_encoded, month_encoded]])
+    
+    # Send the predicted yield value as a response
+    return str(prediction[0])
+
+    
 
 
 

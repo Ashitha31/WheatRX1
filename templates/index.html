@@ -88,7 +88,7 @@
         <div class="col-xl-2 col-md-4">
           <div class="icon-box">
             <img src="/static/img/icons/yield_pred.png" height=40% width="40%" alt="yield" />
-            <h3><a href="">Yield Prediction</a></h3>
+            <h3><a class="nav-link scrollto" href="{{ url_for('yield_page') }}">Yield Prediction</a></h3>
           </div>
         </div>
         <div class="col-xl-2 col-md-4">
@@ -101,7 +101,7 @@
         <div class="col-xl-2 col-md-4">
           <div class="icon-box">
             <img src="/static/img/icons/weather.png" height=35% width="35%" alt="weather" />
-            <h3><a href="">Weather today</a></h3>
+            <h3><a href="{{url_for('weather')}}">Weather today</a></h3>
           </div>
         </div>
         <div class="col-xl-2 col-md-4">
