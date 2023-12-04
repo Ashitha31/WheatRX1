@@ -80,18 +80,17 @@
 </head>
 <body>
     <div class="container">
-        <form action="/predict" method="post">
-            <h2>Login</h2>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-
-            <button type="submit">Login</button>
-        </form>
+    <h1>Login Page</h1><br>
+    <form method ="POST" action="">
         
-        <a class="signup-link" href="templates/register.html">Sign up now</a>
+        {{ form.hidden_tag() }} <!--to protect against csrf attacks, Flask-WTF can verify that the form submission originated from the same application -->
+        {{ form.username }} <br> <br> <!-- instead of input tag, flask-wtf render template -->
+        {{ form.password }} <br> <br>
+        <input type="submit" value="Login" class="login-button">
+        
+    </form>
+    <br>
+    <a href="{{url_for('register')}}">Don't have an account? Sign up</a>
     </div>
 </body>
 </html>

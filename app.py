@@ -1,4 +1,3 @@
-from flask import Flask, render_template, request
 from joblib import load
 import requests
 import pickle
@@ -17,8 +16,103 @@ import pathlib
 import glob
 import cv2
 from torchvision.transforms import ToTensor
+from flask import Flask, render_template, redirect, url_for, request, send_file, send_from_directory
+import os
+import secrets
+import cv2
+from flask_mysqldb import MySQL
+from flask_wtf import FlaskForm
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length, ValidationError, Email
+from flask_bcrypt import Bcrypt
+from flask_login import UserMixin
+from wtforms.validators import InputRequired, ValidationError, DataRequired
+from email_validator import validate_email, EmailNotValidError
+
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
+
+
+
+# MySQL configuration
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '123456'
+app.config['MYSQL_DB'] = 'wheatrx'
+
+# Create MySQL object
+mysql = MySQL(app)
+
+# Set the secret key
+app.config['SECRET_KEY'] = 'c0749ed9ed9fe634802a51c323321da434859414' #to secure signin cookies
+
+login_manager = LoginManager()   # to manage user sessions and handle user login functionality.
+login_manager.init_app(app)     #to initialize LoginManager()
+#When a user tries to access a protected route without being authenticated, the LoginManager redirects them to the login view specified by login_manager.login_view. In this case, it is set to "login", which means that the Flask view named "login" will handle the login functionality.
+login_manager.login_view = "login"
+
+#UserMixin is a Flask extension for managing user authentication and sessions. 
+class User(UserMixin):
+    def __init__(self, user_id, username):
+        self.id = user_id    #unique identifier for the user. 
+        self.username = username   #stores the username of the user. It is used to identify and display the user's name when needed.
+
+
+#the user loader is responsible for loading a user object based on the provided user_id. 
+@login_manager.user_loader
+def load_user(user_id):
+    cur = mysql.connection.cursor()    # to fetch the user data associated with the provided user_id. 
+    cur.execute("SELECT * FROM Users WHERE id = %s", (user_id,))
+    user_data = cur.fetchone()
+    cur.close()
+
+    if user_data:
+        return User(user_data[0], user_data[1])
+
+    return None
+
+with app.app_context():
+    cur = mysql.connection.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS Users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(20) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            password VARCHAR(80) NOT NULL
+        )
+    """)
+    cur.close()
+
+#RegisterForm class that inherits from the FlaskForm class, which is a base class provided by Flask-WTF for creating forms in Flask applications.
+class RegisterForm(FlaskForm):
+    username = StringField(validators=[InputRequired(), Length(min =4, max=20)], render_kw={"class":"input-field","placeholder":"Username"})
+    email = StringField(validators=[InputRequired(), Email(message='Invalid email address.')], render_kw={"class":"input-field","placeholder": "Email Address"})
+    password = PasswordField(validators=[InputRequired(), Length(min =4, max=20)], render_kw={"class":"input-field","placeholder":"Password"})
+    submit = SubmitField("Register")
+
+    def validate_username(self,username):
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM Users WHERE username = %s", (username.data,))
+        existing_user = cur.fetchone()
+        cur.close()
+        
+        if existing_user:
+            raise ValidationError("Username already exists.")
+        
+    def validate_email(self, email):
+        try:
+            validate_email(email.data)
+        except EmailNotValidError:
+            raise ValidationError('Invalid email address.')
+        
+
+class LoginForm(FlaskForm):
+    username = StringField(validators=[InputRequired(), Length(min =4, max=20)], render_kw={"class":"input-field","placeholder":"Username"})
+    password = PasswordField(validators=[InputRequired(), Length(min =4, max=20)], render_kw={"class":"input-field","placeholder":"Password"})
+    submit = SubmitField("Login")
+
 class ConvNet(nn.Module):
     def __init__(self,num_classes=8):
         super(ConvNet,self).__init__()
@@ -103,10 +197,19 @@ def preprocess_image(image):
     return image
 
 
-
 @app.route('/')
+@login_required  # Use the @login_required decorator to ensure the user is logged in to access this page
 def index():
-    return render_template('index.html')
+    if current_user.is_authenticated:
+        # Only fetch and display user data if the current user is authenticated
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM Users")
+        fetchdata = cur.fetchall()
+        cur.close()
+        return render_template('index.html', data=fetchdata)
+    else:
+        # Redirect to the login page if the user is not authenticated
+        return redirect(url_for('login'))
 
 @app.route('/contactmail', methods=['POST'])
 def contactmail():
@@ -123,13 +226,47 @@ def contactmail():
 
     return "Form submitted successfully!"
 
-@app.route('/login')
+@app.route('/login', methods=['GET','POST'])
 def login():
-    return render_template('login.html')
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM Users WHERE username = %s", (username,))
+        user = cursor.fetchone()
 
-@app.route('/register')
+        if user:
+                hashed_password = user[2] #The assumption is that the hashed password is stored in the third position of the user object.
+                
+                #bcrypt.check_password_hash function from the bcrypt library to compare the provided password with the hashed password.
+                if bcrypt.check_password_hash(hashed_password, password): 
+                    user_obj = User(user[0], user[1])  #It assumes that the user's unique identifier and username are stored in the first and second positions of the user object
+                    login_user(user_obj)
+                    return redirect(url_for('index'))
+
+        cursor.close()
+    return render_template('login.html', form=form)
+
+@app.route('/logout', methods=['GET','POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET','POST'])
 def register():
-    return render_template('register.html')
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data)
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO Users (username, password, email) VALUES (%s, %s, %s)", (form.username.data, hashed_password, form.email.data))
+        mysql.connection.commit()
+        cur.close()
+        return redirect(url_for('login'))
+    
+    return render_template('register.html', form=form)
 
 
 @app.route('/fertilizer')
@@ -139,9 +276,11 @@ def fertilizer():
 @app.route('/wheat')
 def wheat():
     return render_template('wheat.html')
+
 @app.route('/disease')
 def disease():
     return render_template('disease.html')
+
 @app.route('/weather', methods=['GET', 'POST'])
 def weather():
     return render_template('weather.html')
@@ -350,6 +489,21 @@ def prediction():
     
     return "Prediction failed"  # This line is executed if the image processing fails
 
+
+@app.route('/process_form', methods=['POST'])
+def process_form():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        subject = request.form['subject']
+        message = request.form['message']
+
+        # Implement your email sending logic here
+        # You can use a library like Flask-Mail or smtplib for sending emails
+
+        return 'success'  # Or redirect to a success page
+    else:
+        return 'Invalid request'
 
 if __name__ == '__main__':
     app.run(debug=True)
