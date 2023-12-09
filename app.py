@@ -329,7 +329,8 @@ def yield_prediction():
     state = request.form['state']
     district = request.form['district']
     month = request.form['month']
-
+    if not month:
+        return "Please provide a valid month"
     state_encoded = label_encoders['State'].transform([state])[0]
     district_encoded = label_encoders['District'].transform([district])[0]
     month_encoded = label_encoders['Month'].transform([month])[0]

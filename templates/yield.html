@@ -29,7 +29,7 @@
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
-            width: 300px;
+            width: 500px;
             margin: 0 auto;
             position: relative; /* Add relative positioning */
             z-index: 1; /* Set higher z-index for the form */
@@ -101,37 +101,179 @@
     <h3>{{ yield_info.title }}</h3>
     <p>{{ yield_info.description }}</p>
     <form method="post" action="/yield_predict" id="prediction-form"> <!-- Added ID attribute -->
-        <label for="state">State:</label>
-        <input type="text" id="state" name="state"><br><br>
-
-        <label for="district">District:</label>
-        <input type="text" id="district" name="district"><br><br>
-
-        <label for="month">Month:</label>
-        <input type="text" id="month" name="month"><br><br>
-
+        
+        <label for="state">Select State:</label>
+        <select name="state" id="state" onchange="updateDistricts()">
+          
+            <option value="Andhra Pradesh" selected="selected">Andhra Pradesh</option>
+            <option value="Arunachal Pradesh" selected="selected">Arunachal Pradesh</option>
+            <option value="Assam" selected="selected">Assam</option>
+            <option value="Bihar" selected="selected">Bihar</option>
+            <option value="Chhattisgarh" selected="selected">Bihar</option>
+            <option value="Delhi" selected="selected">Delhi</option>
+            <option value="Goa" selected="selected">Goa</option>
+            <option value="Gujarat" selected="selected">Gujarat</option>
+            <option value="Haryana" selected="selected">Haryana</option>
+            <option value="Himachal Pradesh" selected="selected">Himachal Pradesh</option>
+            <option value="Jammu & Kashmir" selected="selected">Jammu & Kashmir</option>
+            <option value="Jharkhand" selected="selected">Jharkhand</option>
+            <option value="Karnataka" selected="selected">Karnataka</option>
+            <option value="Kerala" selected="selected">Kerala</option>
+            <option value="TAMIL NADU" selected="selected">TAMIL NADU</option>
+            <option value="Punjab" selected="selected">Punjab</option>
+        </select>
+    
+        <label for="district">Select District:</label>
+<select name="district" id="district">
+            
+        </select>
+        <br><br>
+        <label for="month">Select Month:</label>
+        <select name="month" id="month">
+            <option value="1" selected="selected">1</option>
+            <option value="2" selected="selected">2</option>
+            <option value="3" selected="selected">3</option>
+            <option value="4" selected="selected">4</option>
+            <option value="5" selected="selected">5</option>
+            <option value="6" selected="selected">6</option>
+            <option value="7" selected="selected">7</option>
+            <option value="8" selected="selected">8</option>
+            <option value="9" selected="selected">9</option>
+            <option value="10" selected="selected">10</option>
+            <option value="11" selected="selected">11</option>
+            <option value="12" selected="selected">12</option>
+        </select>
+       
+<br><br>
         <input type="submit" value="Predict">
     </form>
 
-    <div id="result"></div>
-
+    <div id="result">
+        {% if prediction_result %}
+            <p>Predicted Yield: {{ prediction_result }} tonne/hectare</p>
+        {% endif %}
+    </div>
+</body>
     <script>
-        document.getElementById("prediction-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
+        function updateDistricts() {
+            var stateSelect = document.getElementById('state');
+            var districtSelect = document.getElementById('district');
+            var stateValue = stateSelect.value;
             
-            fetch('/yield_predict', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())  // Parse the response as text
-            .then(data => {
-                document.getElementById("result").innerHTML = `<p>Predicted Yield: ${data}</p>`;
-            })
-            .catch(error => console.error('Error:', error));
+            // Clear existing options in the district select dropdown
+            districtSelect.innerHTML = '';
+            
+            // Add districts based on the selected state (Replace with your logic)
+           if (stateValue === 'Andhra Pradesh') {
+                var districts = ['Anantapur', 'Chittoor', 'East Godavari','Guntur','Krishna','Kurnool','Prakasam','SPSR Nellore','Srikakulam','Visakhapatanam','Vizianagaram','West Godavari','Y.S.R.']; // Sample districts for State 2
+            }
+            else if (stateValue === 'Arunachal Pradesh') {
+                var districts = ['Anjaw', 'Changlang', 'Dibang Valley','East Kameng','East Siang','Kamle','Kra Daadi','Kurung Kumey','Leparada','Lohit','Longding','Lower Dibang Valley','Lower Siang','Lower Subansiri','Namsai','Pakke Kessang','Papum Pare','Shi Yomi','Siang','Tawang','Tirap','Upper Siang','Upper Subansiri','West Kameng','West Siang'];
+            } 
+            else if (stateValue === 'Assam') {
+                var districts = ['Baksa', 'Barpeta', 'Biswanath','Bongaigaon','Cachar','Chirang','Darrang','Dhemaji','Dhubri','Dibrugarh','Goalpara','Golaghat','Hailakandi','Jorhat','Kamrup','Kamrup Metro','Karbi Anglong','Karimganj','Kokrajhar','Lakhimpur','Marigaon','Nagaon','Nalbari','Sivasagar','Sonitpur','Tinsukia','Udalguri','West Karbi Anglong'];
+            }
+            else if (stateValue === 'Bihar') {
+                var districts = ['Banka', 'Begusarai', 'Bhagalpur','Bhojpur','Buxar','Darbhanga','Gaya','Gopalganj','Jamui','Jehanabad','Kaimur (Bhabua)','Katihar','Khagaria','Kishanganj','Lakhisarai','Madhepura','Madhubani','Munger','Muzaffarpur','Nalanda','Nawada','Patna','Purnia','Rohtas','Rohtas','Samastipur','Saran','Sheikhpura','Sheohar','Sitamarhi','Siwan','Supaul','Vaishali'];
+            }
+            else if (stateValue === 'Chandigarh') {
+                var districts = ['Chandigarh'];
+            } 
+            else if (stateValue === 'Chhattisgarh') {
+                var districts = ['Bastar','Bijapur','Bilapur','Dantewada','Dhamtari','Durg','Janjgir-Champa','Jashpur','Kanker','Korba','Korea','Mahasamund','Narayanpur','Raigarh','Raipur','Rajnandgaon','Surguja'];
+            } 
+        
+            else if (stateValue === 'Delhi') {
+                var districts = ['Central','East','New Delhi','North','North East','North West','Shahdara','South','South East','South West','West'];
+            }
+            else if (stateValue === 'Goa') {
+                var districts = ['North Goa','South Goa'];
+            }
+            else if (stateValue === 'Gujarat') {
+                var districts = ['Ahmadabad','Amreli','Anand','Banas Kantha','Bharuch','Bhavnagar','Dang','Devbhumi Dwarka','Gandhinagar','Jamnagar','Junagadh','Kachchh','Kheda','Mahesana','Narmada','Navsari','Panch Mahals','Patan','Porbandar','Rajkot','Sabar Kantha','Surat','Surendranagar','Tapi','Valsad'];
+            } 
+            else if (stateValue === 'Haryana') {
+                var districts = ['Ambala','Bhiwani','Faridabad','Fatehabad','Gurugram','Hisar','Jhajjar','Jind','Kaithal','Karnal','Kurukshetra','Mahendragarh','Kheda','Palwal','Panchkula','Panipat','Rewari','Rohtak','Sirsa','Sonipat','Yamunanagar'];
+            } 
+            else if (stateValue === 'Himachal Pradesh') {
+                var districts = ['Bilaspur','Chamba','Hamirpur','Kangra','Kinnaur','Kullu','Lahul & Spiti','Mandi','Shimla','Sirmaur','Solan','Una'];
+            }
+            else if (stateValue === 'Jammu & Kashmir') {
+                var districts = ['Anantnag','Bandipora','Baramulla','Doda','Ganderbal','Jammu','Kathua','Kishtwar','Kulgam','Kupwara','Poonch','Pulwama','Rajouri','Ramban','Reasi','Samba','Shopian','Srinagar','Udhampur'];
+            } 
+            else if (stateValue === 'Jharkhand') {
+                var districts = ['Bokaro','Chatra','Deoghar','Dhanbad','Dumka','East Singhbum','Garhwa','Giridih','Gumla','Hazaribagh','Jamtara','Khunti','Koderma','Latehar','Lohardaga','Pakur','Palamu','Ramgarh','Ranchi','Sahebganj','Saraikela Kharsawan','Simdega','West Singhbhum'];
+            } 
+            else if (stateValue === 'Karnataka') {
+                var districts = ['Bagalkote', 'Ballari', 'Bengaluru Rural','Bengaluru Urban','Bidar','Chamarajanagara','Chikkaballapura','Chikkamagaluru','Chitradurga','Dakshina Kannada','Davangere','Dharwad','Gadag','Hassan','Haveri','Kodagu','Kolar','Koppal','Mandya','Mysuru','Raichur','Ramanagara','Shivamogga','Tumakuru','Udupi','Uttara Kannada','Vijayapura','Yadgir']; // Sample districts for State 2
+            }
+            else if (stateValue === 'Kerala') {
+                var districts = ['Alappuzha', 'Ernakulam', 'Idukki','Kannur','Kasaragod','Kollam','Kottayam','Kozhikode','Malappuram','Palakkad','Pathanamthitta','Thiruvananthapuram','Thrissur','Wayanad']; // Sample districts for State 2
+            }
+            else if (stateValue === 'TAMIL NADU') {
+                var districts = ['ARIYALUR', 'CHENNAI', 'COIMBATORE','CUDDALORE','DHARMAPURI','DINDIGUL','ERODE','KANCHEEPURAM','KANNIYAKUMARI','KARUR','KRISHNAGIRI','MADURAI','NAGAPPATTINAM','NAMAKKAL','PERAMBALUR','PUDUKKOTTAI','SALEM','SIVAGANGA','THANJAVUR','THE NILGIRIS','THENI','THIRUVALLUR','THIRUVARUR','THOOTHUKKUDI','TIRUCHIRAPPALLI','TIRUNELVELI','TIRUPPUR','TIRUVANNAMALAI','VELLORE','VILUPPURAM','VIRUDUNAGAR']; // Sample districts for State 2
+            }
+            else if (stateValue === 'Punjab') {
+                var districts = ['Amritsar', 'Bathinda', 'Faridkot'];
+            }
+            // Populate district options
+            for (var i = 0; i < districts.length; i++) {
+                var option = document.createElement('option');
+                option.value = districts[i];
+                option.text = districts[i];
+                districtSelect.appendChild(option);
+            }
+        }
+        document.getElementById("prediction-form").addEventListener("submit", function(event) {
+            var stateValue = document.getElementById('state').value;
+            var districtValue = document.getElementById('district').value;
+            var monthValue = document.getElementById('month').value;
+    
+            // Check if state, district, or month is not selected
+            if (stateValue === "" || districtValue === "" || monthValue === "") {
+                event.preventDefault(); // Prevent the default form submission
+    
+                // Display an error message
+                var errorMessage = document.createElement('p');
+                errorMessage.textContent = "Please select State, District, and Month before predicting.";
+                errorMessage.style.color = "red";
+                errorMessage.style.fontWeight = "bold";
+    
+                // Check if error message already exists, remove it before adding a new one
+                var existingErrorMessage = document.getElementById('error-message');
+                if (existingErrorMessage) {
+                    existingErrorMessage.remove();
+                }
+    
+                // Append the error message to the form
+                errorMessage.id = 'error-message';
+                this.appendChild(errorMessage);
+            }
+
+            event.preventDefault(); // Prevent the default form submission
+            
+            // Get form data
+            var formData = new FormData(this);
+            
+            // Make an AJAX request to send form data to the Flask endpoint
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/yield_predict", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // Update the result div with the received prediction
+                        document.getElementById("result").innerHTML = "<p>Predicted Yield: " + xhr.responseText + " tonne/hectare</p>";
+                    } else {
+                        // Handle error
+                        console.error('There was an error with the request.');
+                    }
+                }
+            };
+            xhr.send(formData);
         });
+        
     </script>
     
     
-</body>
+
 </html>
