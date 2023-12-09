@@ -40,7 +40,7 @@ bcrypt = Bcrypt(app)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = '123456'
-app.config['MYSQL_DB'] = 'wheatrx'
+app.config['MYSQL_DB'] = 'encode'
 
 # Create MySQL object
 mysql = MySQL(app)
@@ -198,18 +198,13 @@ def preprocess_image(image):
 
 
 @app.route('/')
-@login_required  # Use the @login_required decorator to ensure the user is logged in to access this page
 def index():
-    if current_user.is_authenticated:
-        # Only fetch and display user data if the current user is authenticated
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM Users")
         fetchdata = cur.fetchall()
         cur.close()
         return render_template('index.html', data=fetchdata)
-    else:
-        # Redirect to the login page if the user is not authenticated
-        return redirect(url_for('login'))
+
 
 @app.route('/contactmail', methods=['POST'])
 def contactmail():
