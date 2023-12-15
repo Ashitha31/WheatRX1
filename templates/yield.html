@@ -94,6 +94,25 @@
             height: auto;
         }
 
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #ffffff; /* Set the background color of the result box */
+            color: #104926; /* Set the text color of the result box */
+            max-width: 400px; /* Adjust the maximum width as needed */
+            margin: 0 auto;
+            position: relative;
+            z-index: 3; /* Set a higher z-index for the result box to appear above other elements */
+        }
+
+        .highlighted-result {
+            background-color: #fdfdfb; /* Set the background color for highlighting */
+            color: #104926; /* Set the text color for highlighted text */
+            padding: 15px; /* Add padding for better visibility */
+            border-radius: 5px; /* Add border-radius for rounded corners */
+        }
+
     </style>
 </head>
 <body>
@@ -150,7 +169,10 @@
 
     <div id="result">
         {% if prediction_result %}
-            <p>Predicted Yield: {{ prediction_result }} tonne/hectare</p>
+            <div class="result-box">
+                <!-- Result content goes here -->
+                <p class="highlighted-result">Predicted Yield: {{ prediction_result }} tonne/hectare</p>
+            </div>
         {% endif %}
     </div>
 </body>
@@ -262,7 +284,7 @@
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
                         // Update the result div with the received prediction
-                        document.getElementById("result").innerHTML = "<p>Predicted Yield: " + xhr.responseText + " tonne/hectare</p>";
+                        document.getElementById("result").innerHTML = "<p class='highlighted-result'>Predicted Yield: " + xhr.responseText + " tonne/hectare</p>";
                     } else {
                         // Handle error
                         console.error('There was an error with the request.');

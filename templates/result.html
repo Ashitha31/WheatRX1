@@ -4,6 +4,11 @@
 <head>
     <title>WheatRX</title>
     <!--link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"-->
+
+      <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="icon">
+  <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  
     <style>
                 body {
             font-family: Arial, sans-serif;
@@ -98,14 +103,35 @@
 
         }
 
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #ffffff; /* Set the background color of the result box */
+            color: #104926; /* Set the text color of the result box */
+            max-width: 400px; /* Adjust the maximum width as needed */
+            margin: 0 auto;
+            position: relative;
+            z-index: 3; /* Set a higher z-index for the result box to appear above other elements */
+        }
+
+        .highlighted-result {
+            background-color: #fdfdfb; /* Set the background color for highlighting */
+            color: #104926; /* Set the text color for highlighted text */
+            padding: 15px; /* Add padding for better visibility */
+            border-radius: 5px; /* Add border-radius for rounded corners */
+        }
+
     </style>
 </head>
 
 <body>
     <h1>Wheat Disease Prediction Result</h1>
     <img src="{{ url_for('static', filename=predicted_image) }}" alt="Uploaded Image">
-    <p>Predicted disease class: {{ class_label }}</p>
-    <p>Fertilizer recommendation: {{ fertilizer }}</p>
+    <div class="result-box">
+    <p class="highlighted-result">Predicted disease class: {{ class_label }}</p>
+    <p class="highlighted-result">Fertilizer recommendation: {{ fertilizer }}</p>
+    </div>
 </body>
 
 </html>

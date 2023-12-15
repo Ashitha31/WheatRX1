@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="icon">
+  <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
     <title>Wheat Disease and Yield Prediction - Register</title>
     <style>
         body {
@@ -16,7 +19,7 @@
         }
 
         .container {
-            background-color: #fff;
+            backface-visibility: visible;
             padding: 30px; /* Increased padding */
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -74,7 +77,7 @@
         
     </form>
     <br>
-    <a href="{{url_for('login')}}">Already have an account? Log in</a>
+    <a href="{{url_for('login')}}" style="color: rgb(129, 32, 167); font-weight: bold;">Already have an account? Log in</a>
     </div>
 </body>
 </html>

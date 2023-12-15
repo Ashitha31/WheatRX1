@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+      <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="icon">
+  <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
     <title>Weather Information</title>
     <style>
         body {
@@ -104,7 +107,7 @@
     </form>
 
     {% if city %}
-        <h2>Weather in {{ city }}</h2>
+        <h2 style="color: #f6fd72;">Weather in {{ city }}</h2>
         <p>Temperature: {{ (temperature - 273.15) | round }} °C</p> <!-- Convert temperature from Kelvin to Celsius and round -->
         <p>Description: {{ description }}</p>
     {% endif %}

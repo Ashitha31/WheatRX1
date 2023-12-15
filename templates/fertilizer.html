@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+      <!-- Favicons -->
+  <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="icon">
+  <link href="{{ url_for('static', filename='img/apple-touch-icon.png') }}" rel="apple-touch-icon">
     <title>Fertilizer Recommendation System</title>
     <style>
         body {
@@ -26,7 +29,7 @@
 
 
         form {
-            background-color: #fff;
+            backface-visibility: visible;
             border-radius: 10px;
             padding: 20px;
             width: 300px;
@@ -36,12 +39,14 @@
         }
 
         label {
+            color: white;
             display: block;
             font-weight: bold;
             margin-top: 10px;
         }
 
         input[type="text"] {
+            color: rgb(15, 15, 15);
             width: 80%;
             padding: 10px;
             margin: 5px 0px 15px;
@@ -65,7 +70,7 @@
         p {
             margin: 20px 0;
             font-weight: bold;
-            color: #f1f6f4;
+            color: #0c0c0c;
         }
 
         /* Additional Box Styling */
@@ -94,6 +99,24 @@
             height: auto;
         }
 
+        .result-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #ffffff; /* Set the background color of the result box */
+            color: #101111; /* Set the text color of the result box */
+            margin: 0 auto;
+            position: relative;
+            z-index: 3; /* Set a higher z-index for the result box to appear above other elements */
+        }
+
+        .highlighted-result {
+            background-color: #fdfdfb; /* Set the background color for highlighting */
+            color: #104926; /* Set the text color for highlighted text */
+            padding: 15px; /* Add padding for better visibility */
+            border-radius: 5px; /* Add border-radius for rounded corners */
+        }
+
     </style>
 </head>
 <body>
@@ -111,12 +134,15 @@
         <input type="submit" value="Predict">
 
         {% if result %}
-            <p style="text-align: center; color: green; font-weight: bold;">{{ result }}</p>
+            <p style="text-align: center; color: rgb(250, 247, 247); font-weight: bold;">{{ result }}</p>
     </form>
     <div class="additional-info-box">
+        <div class="result-box">
+
         
 
             <div class="image-container">
+                
                 {% if fertilizer_info %}
                     <img src="{{ fertilizer_info.image_path }}" alt="{{ result }} Image">
                 {% else %}
@@ -129,7 +155,7 @@
                 <p>Crops: {{ fertilizer_info.crops|join(', ') }}</p>
                 
                 <p>How to Use:</p>
-                <ul style="color: #f1f6f4; font-weight: bold;">
+                <ul style="color: #101110; font-weight: bold;">
                     {% for sentence in fertilizer_info.how_to_use %}
                         <li>{{ sentence }}</li>
                     {% endfor %}
@@ -138,6 +164,8 @@
                 <p>Price: {{ fertilizer_info.price }}</p>
             {% endif %}
         {% endif %}
+        </div>
+
     </div>
     
 </body>

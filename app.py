@@ -31,10 +31,17 @@ from wtforms.validators import InputRequired, ValidationError, DataRequired
 from email_validator import validate_email, EmailNotValidError
 
 
+
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'ashitha.jerry@mca.christuniversity.in'
+app.config['MAIL_PASSWORD'] = '12345'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+# mail = Mail(app)
 
 # MySQL configuration
 app.config['MYSQL_HOST'] = 'localhost'
